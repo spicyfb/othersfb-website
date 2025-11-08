@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Payment</title>
+  <style>
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: #f7f7f7;
+      color: #333;
+      margin: 0;
+      padding: 0;
+    }
+
+    .checkout-container {
+      max-width: 500px;
+      background: white;
+      margin: 50px auto;
+      padding: 30px 25px;
+      border-radius: 16px;
+      box-shadow: 0 6px 20px rgba(0,0,0,0.08);
+    }
+
+    h2 {
+      text-align: center;
+      color: #111;
+      font-weight: 600;
+      margin-bottom: 25px;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 8px;
+      font-size: 14px;
+      color: #666;
+    }
+
+    input {
+      width: 100%;
+      padding: 12px;
+      border: 1px solid #ccc;
+      border-radius: 10px;
+      margin-bottom: 20px;
+      font-size: 15px;
+      transition: border-color 0.3s ease;
+    }
+
+    input:focus {
+      border-color: #111;
+      outline: none;
+    }
+
+    .payment-type {
+      display: flex;
+      gap: 10px;
+      justify-content: space-between;
+      margin-bottom: 20px;
+    }
+
+    .payment-type button {
+      flex: 1;
+      padding: 12px;
+      border-radius: 10px;
+      border: 1px solid #ccc;
+      background: #fafafa;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      font-weight: 500;
+    }
+
+    .payment-type button.active {
+      background: #111;
+      color: white;
+      border-color: #111;
+    }
+
+    .gray-note {
+      color: #888;
+      font-size: 13px;
+      margin-top: -10px;
+      margin-bottom: 15px;
+    }
+
+    button.submit-btn {
+      width: 100%;
+      padding: 14px;
+      background: #111;
+      color: white;
+      border: none;
+      border-radius: 10px;
+      font-size: 16px;
+      cursor: pointer;
+      font-weight: 600;
+      transition: background 0.3s ease;
+    }
+
+    button.submit-btn:hover {
+      background: #333;
+    }
+
+    .success-message {
+      display: none;
+      background: #e9f9ee;
+      color: #1a7f37;
+      border: 1px solid #c1e8c7;
+      padding: 10px;
+      border-radius: 8px;
+      text-align: center;
+      font-size: 14px;
+      margin-top: 15px;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="checkout-container">
+    <h2>Checkout</h2>
+
+    <form id="checkout-form">
+      <label for="name">Full Name</label>
+      <input type="text" id="name" name="name" placeholder="Enter your full name" required>
+
+      <label for="email">Email Address</label>
+      <input type="email" id="email" name="email" placeholder="We’ll send your confirmation here" required>
+
+      <label>Payment Method</label>
+      <div class="payment-type">
+        <button type="button" id="eft-btn" class="active">Instant EFT</button>
+        <button type="button" id="paypal-btn">PayPal</button>
+      </div>
+
+      <div id="eft-section">
+        <p class="gray-note">Use the banking details below to send your payment instantly.</p>
+        <p><strong>Bank:</strong> Capitec Bank</p>
+        <p><strong>Account Number:</strong> 1809972149</p>
+        <p><strong>Account Type:</strong> Savings Account</p>
+        <p><strong>Branch:</strong> 470010</p>
+        <p><strong>Account Holder:</strong> MR K MOLAPO</p>
+        <p class="gray-note">⚠️ After sending your EFT, please email proof of payment to <strong>othersfingerboarding@gmail.com</strong>. We’ll confirm once the funds reflect.</p>
+      </div>
+
+      <div id="paypal-section" style="display:none;">
+        <p class="gray-note">
+          You’ll be redirected to PayPal to complete your payment securely.
+        </p>
+      </div>
+
+      <button type="submit" class="submit-btn">Complete Order</button>
+      <div class="success-message" id="success-message">
+        ✅ Order submitted successfully! You’ll receive an email confirmation shortly.
+      </div>
+    </form>
+  </div>
+
+  <!-- EmailJS -->
+  <script src="https://cdn.jsdelivr.net/npm/emailjs-com@3/dist/email.min.js"></script>
+  <script>
+  (function() {
+    emailjs.init("l6owBb85jrUa1DFhJ"); // your EmailJS public key
+  })();
+
+  const eftBtn = document.getElementById('eft-btn');
+  const paypalBtn = document.getElementById('paypal-btn');
+  const eftSection = document.getElementById('eft-section');
+  const paypalSection = document.getElementById('paypal-section');
+  const checkoutForm = document.getElementById('checkout-form');
+  const successMsg = document.getElementById('success-message');
+
+  let paymentMethod = 'EFT';
+
+  // --- Toggle payment sections ---
+  eftBtn.onclick = () => {
+    paymentMethod = 'EFT';
+    eftBtn.classList.add('active');
+    paypalBtn.classList.remove('active');
+    eftSection.style.display = 'block';
+    paypalSection.style.display = 'none';
+  };
+
+  paypalBtn.onclick = () => {
+    paymentMethod = 'PayPal';
+    paypalBtn.classList.add('active');
+    eftBtn.classList.remove('active');
+    eftSection.style.display = 'none';
+    paypalSection.style.display = 'block';
+  };
+
+  // --- Handle checkout submission ---
+  checkoutForm.addEventListener('submit', async function(e) {
+    e.preventDefault();
+
+    const loadingOverlay = document.getElementById('loading-overlay');
+    loadingOverlay.style.display = "flex";
+
+    const name = checkoutForm.name.value.trim();
+    const email = checkoutForm.email.value.trim();
+    const orderData = JSON.parse(sessionStorage.getItem("orderData"));
+
+    if (!orderData) {
+      loadingOverlay.style.display = "none";
+      alert("No order found — please go back to checkout and fill in your details.");
+      return;
+    }
+
+    const paymentMethodText = paymentMethod === 'EFT'
+      ? 'Instant EFT (Proof required via email)'
+      : 'PayPal';
+
+    const finalMessage = `
+    📦 New Order / Confirmation
+    From: ${orderData.name} (${orderData.email})
+
+    Phone: ${orderData.phone}
+    Address: ${orderData.address}
+    Shipping Option: ${orderData.shipping}
+
+    🛒 Order Details:
+    ${orderData.orderItems}
+
+    Shipping Cost: R${orderData.shippingCost.toFixed(2)}
+    Total: R${orderData.grandTotal.toFixed(2)}
+
+    Notes: ${orderData.notes}
+
+    💳 Payment Method: ${paymentMethodText}
+    `;
+
+    try {
+      await emailjs.send("service_ev7zj4f", "template_wz9qf1m", {
+        from_name: orderData.name,
+        from_email: orderData.email,
+        phone: orderData.phone,
+        address_full: orderData.address,
+        shipping_option: orderData.shipping,
+        order_items: orderData.orderItems,
+        total: `R${orderData.grandTotal.toFixed(2)}`,
+        message: finalMessage,
+      });
+
+      console.log("✅ Order email sent successfully.");
+      successMsg.style.display = "block";
+      checkoutForm.reset();
+      loadingOverlay.style.display = "none";
+
+      localStorage.removeItem("cart");
+      sessionStorage.removeItem("orderData");
+
+      if (paymentMethod === 'PayPal') {
+        window.location.href = "https://www.paypal.com/paypalme/OthersFingerboarding";
+      }
+
+    } catch (error) {
+      console.error("❌ EmailJS Error:", error);
+      loadingOverlay.style.display = "none";
+      alert("There was an error sending your order confirmation. Please try again.");
+    }
+  });
+  </script>
+
+  <div id="loading-overlay" style="
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(255,255,255,0.9);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 9999;
+    font-family: 'Poppins', sans-serif;
+    font-weight: 500;
+    color: #111;
+    flex-direction: column;
+    display: none;
+  ">
+    <div class="spinner" style="
+      width: 40px;
+      height: 40px;
+      border: 4px solid #ddd;
+      border-top: 4px solid #111;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+    "></div>
+    <p style="margin-top: 15px;">Processing payment, please wait...</p>
+  </div>
+
+  <style>
+  @keyframes spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+  }
+  </style>
+</body>
+</html>

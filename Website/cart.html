@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Your Cart - Others Fingerboarding</title>
+  <style>
+    body {
+      font-family: "Poppins", sans-serif;
+      background-color: #f9f9f9;
+      margin: 0;
+      padding: 0;
+      color: #111;
+    }
+
+    .cart-container {
+      max-width: 420px;
+      margin: 40px auto;
+      background: #fff;
+      border-radius: 14px;
+      box-shadow: 0 5px 25px rgba(0,0,0,0.08);
+      padding: 25px;
+    }
+
+    h2 {
+      text-align: center;
+      font-weight: 700;
+      margin-bottom: 20px;
+    }
+
+    .cart-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid #eee;
+      padding: 12px 0;
+    }
+
+    .cart-item img {
+      width: 56px;
+      height: 56px;
+      border-radius: 10px;
+      object-fit: cover;
+      margin-right: 10px;
+    }
+
+    .item-info {
+      flex: 1;
+      font-size: 13px;
+    }
+
+    .qty-controls {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .qty-controls button {
+      background: #f3f3f3;
+      border: none;
+      padding: 5px 10px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: 600;
+      transition: 0.2s ease;
+    }
+
+    .qty-controls button:hover {
+      background: #111;
+      color: #fff;
+    }
+
+    .remove-btn {
+      background: none;
+      border: none;
+      color: #e11d48;
+      font-weight: 600;
+      cursor: pointer;
+      font-size: 13px;
+    }
+
+    .cart-total {
+      font-weight: 700;
+      font-size: 15px;
+      text-align: right;
+      margin-top: 18px;
+    }
+
+    .checkout-btn {
+      display: block;
+      width: 100%;
+      background: #111;
+      color: #fff;
+      border: none;
+      border-radius: 10px;
+      padding: 12px;
+      margin-top: 20px;
+      font-weight: 600;
+      font-size: 15px;
+      text-align: center;
+      cursor: pointer;
+      transition: background 0.3s ease;
+    }
+
+    .checkout-btn:hover {
+      background: #333;
+    }
+
+    .empty-msg {
+      text-align: center;
+      color: #666;
+      font-size: 14px;
+      margin-top: 30px;
+    }
+  </style>
+</head>
+<body>
+  <div class="cart-container">
+    <h2>Your Cart 🛒</h2>
+    <div id="cartItems"></div>
+    <p id="emptyMsg" class="empty-msg">Your cart is empty.</p>
+    <div id="cartSummary" style="display:none;">
+      <h3 id="cartTotal" class="cart-total">Total: R0.00</h3>
+      <button id="checkoutBtn" class="checkout-btn">Proceed to Checkout</button>
+    </div>
+  </div>
+
+  <script>
+    const CART_KEY = "others_cart_v1";
+    let cart = JSON.parse(localStorage.getItem(CART_KEY) || "[]");
+
+    const cartItems = document.getElementById("cartItems");
+    const emptyMsg = document.getElementById("emptyMsg");
+    const cartTotal = document.getElementById("cartTotal");
+    const cartSummary = document.getElementById("cartSummary");
+    const checkoutBtn = document.getElementById("checkoutBtn");
+
+    function saveCart() {
+      localStorage.setItem(CART_KEY, JSON.stringify(cart));
+    }
+
+    function updateCart() {
+      cartItems.innerHTML = "";
+      let total = 0;
+
+      if (cart.length === 0) {
+        emptyMsg.style.display = "block";
+        cartSummary.style.display = "none";
+        return;
+      }
+
+      emptyMsg.style.display = "none";
+      cartSummary.style.display = "block";
+
+      cart.forEach((item, index) => {
+        const div = document.createElement("div");
+        div.classList.add("cart-item");
+        div.innerHTML = `
+          <img src="${item.img}" alt="${item.name}">
+          <div class="item-info">
+            <div style="font-weight:600;">${item.name}</div>
+            <div style="color:#666;font-size:12px;">${item.price}</div>
+            <div class="qty-controls">
+              <button data-action="dec" data-index="${index}">-</button>
+              <span>${item.qty || 1}</span>
+              <button data-action="inc" data-index="${index}">+</button>
+              <button data-action="remove" data-index="${index}" class="remove-btn">Remove</button>
+            </div>
+          </div>
+        `;
+        cartItems.appendChild(div);
+        total += parseFloat(item.price) * (item.qty || 1);
+      });
+
+      cartTotal.textContent = `Total: R${total.toFixed(2)}`;
+    }
+
+    cartItems.addEventListener("click", (e) => {
+      const action = e.target.dataset.action;
+      const index = e.target.dataset.index;
+      if (!action) return;
+
+      if (action === "inc") cart[index].qty++;
+      if (action === "dec" && cart[index].qty > 1) cart[index].qty--;
+      if (action === "remove") cart.splice(index, 1);
+
+      saveCart();
+      updateCart();
+    });
+
+    checkoutBtn.addEventListener("click", (e) => {
+      e.preventDefault();
+      if (cart.length === 0) {
+        alert("Your cart is empty!");
+        return;
+      }
+      saveCart();
+      window.location.href = "checkout.html";
+    });
+
+    updateCart();
+  </script>
+</body>
+</html>

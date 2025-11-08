@@ -1,0 +1,304 @@
+<!DOCTYPE html>  <html lang="en">  
+<head>  
+  <meta charset="UTF-8" />  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />  
+  <title>Product | Others Fingerboarding</title>  
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet" />  
+  <style>  
+    :root {  
+      --black: #111;  
+      --gray: #777;  
+      --light-gray: #f3f3f3;  
+      --white: #fff;  
+      --accent: #222;  
+    }  body {  
+  font-family: 'Poppins', sans-serif;  
+  margin: 0;  
+  background: var(--light-gray);  
+  color: var(--black);  
+}  
+
+header {  
+  display: flex;  
+  justify-content: center;  
+  align-items: center;  
+  background: var(--white);  
+  padding: 12px 0;  
+  border-bottom: 1px solid #e0e0e0;  
+  position: sticky;  
+  top: 0;  
+  z-index: 10;  
+}  
+
+header img {  
+  width: 32px;  
+  transition: transform 0.2s ease;  
+}  
+header img:hover {  
+  transform: scale(1.05);  
+}  
+
+.product-container {  
+  max-width: 950px;  
+  margin: 70px auto;  
+  background: var(--white);  
+  border-radius: 16px;  
+  box-shadow: 0 6px 25px rgba(0,0,0,0.07);  
+  display: flex;  
+  flex-direction: column;  
+  align-items: center;  
+  padding: 40px 25px;  
+  text-align: center;  
+  border: 1px solid #ddd;  
+}  
+
+.product-gallery {  
+  display: flex;  
+  flex-direction: column;  
+  align-items: center;  
+  gap: 15px;  
+}  
+
+.product-img {  
+  width: 100%;  
+  max-width: 420px;  
+  border-radius: 12px;  
+  border: 1px solid #ccc;  
+  background: #fafafa;  
+  object-fit: contain;  
+  transition: transform 0.3s ease;  
+}  
+
+.product-img:hover {  
+  transform: scale(1.03);  
+}  
+
+.thumbnail-row {  
+  display: flex;  
+  gap: 10px;  
+  justify-content: center;  
+}  
+
+.thumbnail-row img {  
+  width: 70px;  
+  height: 70px;  
+  border-radius: 8px;  
+  object-fit: cover;  
+  border: 1px solid #ccc;  
+  cursor: pointer;  
+  transition: border-color 0.2s ease, transform 0.2s ease;  
+}  
+
+.thumbnail-row img:hover {  
+  border-color: var(--black);  
+  transform: scale(1.05);  
+}  
+
+.company {  
+  text-transform: uppercase;  
+  font-size: 0.85rem;  
+  color: var(--gray);  
+  letter-spacing: 2px;  
+  margin-top: 25px;  
+  margin-bottom: 8px;  
+}  
+
+.product-name {  
+  font-weight: 700;  
+  font-size: 1.8rem;  
+  color: var(--black);  
+  margin-bottom: 10px;  
+}  
+
+.price {  
+  font-size: 1.3rem;  
+  font-weight: 600;  
+  color: var(--accent);  
+  margin-bottom: 25px;  
+}  
+
+.desc {  
+  max-width: 650px;  
+  font-size: 1rem;  
+  line-height: 1.7;  
+  color: #444;  
+  margin-bottom: 35px;  
+  border-top: 1px solid #eee;  
+  padding-top: 20px;  
+}  
+
+.quantity-selector {  
+  margin-bottom: 25px;  
+  display: flex;  
+  align-items: center;  
+  gap: 10px;  
+}  
+
+.quantity-selector label {  
+  font-weight: 500;  
+  font-size: 0.95rem;  
+  color: #333;  
+}  
+
+.quantity-selector select {  
+  padding: 10px 16px;  
+  border-radius: 8px;  
+  border: 1px solid #bbb;  
+  font-size: 0.95rem;  
+  outline: none;  
+  background: #fff;  
+  transition: border 0.2s ease;  
+}  
+
+.quantity-selector select:focus {  
+  border-color: var(--black);  
+}  
+
+.btn {  
+  display: inline-block;  
+  padding: 14px 36px;  
+  border-radius: 50px;  
+  font-weight: 600;  
+  text-decoration: none;  
+  color: var(--white);  
+  transition: all 0.25s ease;  
+  cursor: pointer;  
+  letter-spacing: 0.5px;  
+  margin: 5px;  
+}  
+
+.add-to-cart-btn {  
+  background: var(--black);  
+  box-shadow: 0 4px 14px rgba(0,0,0,0.2);  
+}  
+
+.add-to-cart-btn:hover {  
+  background: #333;  
+  transform: translateY(-2px);  
+}  
+
+.back-btn {  
+  background: #444;  
+}  
+
+.back-btn:hover {  
+  background: #222;  
+  transform: translateY(-2px);  
+}  
+
+footer {  
+  text-align: center;  
+  padding: 25px 0;  
+  color: #888;  
+  font-size: 0.9rem;  
+  border-top: 1px solid #ddd;  
+  margin-top: 60px;  
+}  
+
+@media (max-width: 700px) {  
+  .product-container {  
+    margin: 40px 15px;  
+    padding: 25px;  
+  }  
+  .product-name {  
+    font-size: 1.5rem;  
+  }  
+  .desc {  
+    font-size: 0.95rem;  
+  }  
+  .thumbnail-row img {  
+    width: 60px;  
+    height: 60px;  
+  }  
+}
+
+  </style>  
+</head>  
+<body>    <header>  
+    <a href="index.html">  
+      <img src="images/logo.png" alt="Others Fingerboarding Logo" />  
+    </a>  
+    </div>  
+  </header>    <section class="product-container">  
+    <div class="product-gallery">  
+      <img id="productImg" class="product-img" src="images/default-product.png" alt="Product Image" />  
+      <div class="thumbnail-row" id="thumbnailRow"></div>  
+    </div>  <div class="company" id="productCompany">OTHERS FINGERBOARDING</div>  
+<div class="product-name" id="productName">Loading...</div>  
+<div class="price" id="productPrice">R0.00</div>  
+<div class="desc" id="productDesc">Product description will appear here.</div>  
+
+<div class="quantity-selector">  
+  <label for="quantity">Quantity:</label>  
+  <select id="quantity">  
+    <option value="1">1</option>  
+    <option value="2">2</option>  
+    <option value="3">3</option>  
+    <option value="4">4</option>  
+    <option value="5">5</option>  
+  </select>  
+</div>  
+
+<a href="#" class="btn add-to-cart-btn" id="addToCartBtn">🛍️ Add to Cart</a>  
+<a href="index.html" class="btn back-btn">← Back to Shop</a>
+
+  </section>     <footer>  
+    &copy; 2025 Others Fingerboarding. All rights reserved.  
+  </footer>    <script>  
+  const CART_KEY = "others_cart_v1";  
+  const product = JSON.parse(localStorage.getItem("selected_product"));  
+  
+  if (product) {  
+    document.getElementById("productImg").src = product.img;  
+    document.getElementById("productName").textContent = product.name;  
+    document.getElementById("productPrice").textContent = product.price;  
+    document.getElementById("productDesc").textContent = product.desc;  
+  
+    let company = "Fatmax Fingerboards";  
+    if (product.name.toLowerCase().includes("others")) {  
+      company = "Others Fingerboarding";  
+    } else if (product.name.toLowerCase().includes("total")) {  
+      company = "Total Fingerboards";  
+    }  
+    document.getElementById("productCompany").textContent = company;  
+  
+    // Handle multiple images  
+    if (product.images && product.images.length > 1) {  
+      const thumbnailRow = document.getElementById("thumbnailRow");  
+      product.images.forEach((imgUrl) => {  
+        const thumb = document.createElement("img");  
+        thumb.src = imgUrl;  
+        thumb.addEventListener("click", () => {  
+          document.getElementById("productImg").src = imgUrl;  
+        });  
+        thumbnailRow.appendChild(thumb);  
+      });  
+    }  
+  } else {  
+    document.getElementById("productName").textContent = "Product not found";  
+    document.getElementById("productDesc").textContent = "Please return to the shop.";  
+  }  
+  
+  document.getElementById('addToCartBtn').addEventListener('click', (e) => {  
+    e.preventDefault();  
+    if (!product) {  
+      alert("⚠️ No product found to add to cart.");  
+      return;  
+    }  
+    const quantity = parseInt(document.getElementById('quantity').value);  
+    let cart = JSON.parse(localStorage.getItem(CART_KEY)) || [];  
+    const existingIndex = cart.findIndex(item => item.name === product.name);  
+  
+    if (existingIndex !== -1) {  
+      cart[existingIndex].qty += quantity;  
+    } else {  
+      const numericPrice = parseFloat(product.price.replace(/[^\d.]/g, ""));  
+      cart.push({ ...product, price: numericPrice, qty: quantity });  
+    }  
+  
+    localStorage.setItem(CART_KEY, JSON.stringify(cart));  
+    alert(`✅ ${product.name} (x${quantity}) added to cart!`);  
+  });  
+    
+  </script>  </body>  
+</html>

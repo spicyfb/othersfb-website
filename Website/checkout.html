@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Checkout - Shipping Details</title>
+  <style>
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: #f7f7f7;
+      color: #333;
+      margin: 0;
+      padding: 0;
+    }
+
+    .checkout-container {
+      max-width: 600px;
+      background: white;
+      margin: 50px auto;
+      padding: 30px 25px;
+      border-radius: 16px;
+      box-shadow: 0 6px 20px rgba(0,0,0,0.08);
+    }
+
+    h2 {
+      text-align: center;
+      color: #111;
+      font-weight: 600;
+      margin-bottom: 25px;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 8px;
+      font-size: 14px;
+      color: #555;
+    }
+
+    input, select, textarea {
+      width: 100%;
+      padding: 12px;
+      border: 1px solid #ccc;
+      border-radius: 10px;
+      margin-bottom: 20px;
+      font-size: 15px;
+      transition: border-color 0.3s ease;
+    }
+
+    input:focus, select:focus, textarea:focus {
+      border-color: #111;
+      outline: none;
+    }
+
+    textarea {
+      resize: vertical;
+      min-height: 80px;
+    }
+
+    .shipping-options {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+
+    .shipping-option {
+      border: 1px solid #ccc;
+      border-radius: 10px;
+      padding: 12px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .shipping-option:hover {
+      border-color: #111;
+    }
+
+    .shipping-option input {
+      margin-right: 10px;
+    }
+
+    button.submit-btn {
+      width: 100%;
+      padding: 14px;
+      background: #111;
+      color: white;
+      border: none;
+      border-radius: 10px;
+      font-size: 16px;
+      cursor: pointer;
+      font-weight: 600;
+      transition: background 0.3s ease;
+    }
+
+    button.submit-btn:hover {
+      background: #333;
+    }
+
+    .success-message {
+      display: none;
+      background: #e9f9ee;
+      color: #1a7f37;
+      border: 1px solid #c1e8c7;
+      padding: 10px;
+      border-radius: 8px;
+      text-align: center;
+      font-size: 14px;
+      margin-top: 15px;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="checkout-container">
+    <h2>Shipping Details</h2>
+    
+    <form id="shipping-form">
+      <label for="name">Full Name</label>
+      <input type="text" id="name" name="name" placeholder="John Doe" required>
+
+      <label for="email">Email Address</label>
+      <input type="email" id="email" name="email" placeholder="you@example.com" required>
+
+      <label for="phone">Phone Number</label>
+      <input type="tel" id="phone" name="phone" placeholder="071 234 5678" required>
+
+      <label for="address">Street Address</label>
+      <input type="text" id="address" name="address" placeholder="123 Main Street" required>
+
+      <label for="city">City / Town</label>
+      <input type="text" id="city" name="city" placeholder="Johannesburg" required>
+
+      <label for="postal">Postal Code</label>
+      <input type="text" id="postal" name="postal" placeholder="0000" required>
+
+      <label>Shipping Method</label>
+      <div class="shipping-options">
+        <label class="shipping-option">
+          <input type="radio" name="shipping" value="Door To Door (1–2 days)" checked>
+          The Courier Guy (1–2 business days) R115
+        </label>
+        <label class="shipping-option">
+          <input type="radio" name="shipping" value="Pudo Locker (1–4 days)">
+          Pudo Locker (1–4 business days) R50
+        </label>
+        <label class="shipping-option">
+          <input type="radio" name="shipping" value="International">
+          Total Fingerboards (6-14 Business days) R250
+        </label>
+      </div>
+
+      <label for="notes">Order Notes (optional)</label>
+      <textarea id="notes" name="notes" placeholder="Any special instructions or details?"></textarea>
+
+      <button type="submit" class="submit-btn">Continue to Payment</button>
+      <div class="success-message" id="success-message">
+        ✅ Shipping info saved! Redirecting to payment...
+      </div>
+    </form>
+  </div>
+
+  <!-- EmailJS -->
+  <script>
+document.addEventListener("DOMContentLoaded", () => {
+  const shippingForm = document.getElementById("shipping-form");
+
+  shippingForm.addEventListener("submit", (e) => {
+    e.preventDefault();
+
+    const name = document.getElementById("name").value.trim();
+    const email = document.getElementById("email").value.trim();
+    const phone = document.getElementById("phone").value.trim();
+    const address = `${document.getElementById("address").value.trim()}, ${document.getElementById("city").value.trim()}, ${document.getElementById("postal").value.trim()}`;
+    const notes = document.getElementById("notes").value.trim() || "None";
+    const shipping = document.querySelector("input[name='shipping']:checked")?.value || "Not specified";
+
+    // Get cart data
+const cart = JSON.parse(localStorage.getItem("others_cart_v1")) || [];
+console.log("🛒 Cart contents:", cart);
+    let orderItems = "";
+    let totalPrice = 0;
+
+if (cart.length > 0) {
+  cart.forEach(item => {
+    const name = item.name || "Unnamed Product";
+    const quantity = parseInt(item.quantity) || 1;
+
+    // Handle any format of price
+    let rawPrice = item.price || item.productPrice || item.amount || item.total || 0;
+
+    // Remove "R" or other symbols if present
+    if (typeof rawPrice === "string") {
+      rawPrice = rawPrice.replace(/[^\d.-]/g, "");
+    }
+
+    const price = parseFloat(rawPrice) || 0;
+    const lineTotal = price * quantity;
+    totalPrice += lineTotal;
+
+    orderItems += `${name} x${quantity} (R${lineTotal.toFixed(2)})\n`;
+  });
+} else {
+  orderItems = "Cart is empty (no items found)";
+}
+
+    // Shipping costs
+    let shippingCost = 0;
+    if (shipping.includes("Door")) shippingCost = 100.00;
+    else if (shipping.includes("Pudo")) shippingCost = 80.00;
+    else if (shipping.includes("International")) shippingCost = 250.00;
+
+    const grandTotal = totalPrice + shippingCost;
+
+    // Format clean message
+    const finalMessage = `
+📦 New Order / Confirmation
+From: ${name} (${email})
+
+Phone: ${phone}
+Address: ${address}
+Shipping Option: ${shipping}
+
+🛒 Order Details:
+${orderItems}
+Shipping Cost: R${shippingCost.toFixed(2)}
+Total: R${grandTotal.toFixed(2)}
+
+Notes: ${notes}
+
+– Others Fingerboarding
+`;
+
+    // Save order data for payment page
+    const orderData = {
+      name,
+      email,
+      phone,
+      address,
+      shipping,
+      orderItems,
+      shippingCost,
+      grandTotal,
+      notes,
+    };
+
+    sessionStorage.setItem("orderData", JSON.stringify(orderData));
+
+    // Email will be sent after successful payment on payment.html
+    // So only show success message here and redirect
+    document.getElementById("success-message").style.display = "block";
+    setTimeout(() => {
+      window.location.href = "payment.html";
+    }, 1200);
+  });
+});
+</script>
+</body>
+</html>
