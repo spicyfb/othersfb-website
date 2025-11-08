@@ -1,0 +1,435 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Others Fingerboarding</title>
+  <link rel="stylesheet" href="style.css" />
+  <style>
+    /* === RESTORED CLASSIC STYLE (No sold out, full compatibility) === */
+    * { margin: 0; padding: 0; box-sizing: border-box; font-family: "Poppins", sans-serif; }
+    body { background: #fff; color: #222; -webkit-font-smoothing: antialiased; overflow-x: hidden; }
+
+    /* Navbar */
+    .navbar { height: 60px; background: #fff; display: flex; align-items: center; justify-content: space-between;
+      padding: 0 14px; box-shadow: 0 2px 6px rgba(0, 0, 0, 0.06); position: sticky; top: 0; z-index: 2000; }
+    .nav-left, .nav-right { display: flex; align-items: center; gap: 12px; }
+    .menu-icon { font-size: 22px; cursor: pointer; }
+    .nav-center { position: absolute; left: 50%; transform: translateX(-50%); }
+    .nav-logo { height: 32px; object-fit: contain; display: block; }
+    .nav-search, .nav-cart { height: 20px; cursor: pointer; }
+
+    .cart-count {
+      background: #ff4d4f; color: #fff; border-radius: 999px; padding: 2px 8px; font-weight: 700;
+      font-size: 12px; display: none; position: relative; top: -8px; left: -8px;
+    }
+
+    /* Side Menu */
+    .side-menu { position: fixed; top: 0; left: -250px; width: 250px; height: 100%; background: #fff;
+      box-shadow: 3px 0 10px rgba(0, 0, 0, 0.1); padding: 20px; transition: left 0.3s ease; z-index: 3000; }
+    .side-menu.open { left: 0; }
+    .side-menu .close-btn { font-size: 24px; cursor: pointer; text-align: right; display: block; }
+    .side-menu ul { list-style: none; margin-top: 20px; }
+    .side-menu li { margin: 18px 0; }
+    .side-menu a { text-decoration: none; color: #111; font-weight: 600; }
+    .side-menu a:hover { color: #555; }
+
+    /* Search */
+    .search-bar-container { width: 100%; background: #fff; display: none; justify-content: center; padding: 10px;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08); }
+    .search-bar-container.active { display: flex; }
+    .search-bar-container input {
+      width: 90%; max-width: 420px; padding: 8px 12px; border: 1px solid #ccc; border-radius: 6px; font-size: 14px;
+    }
+
+    /* Products */
+    .products { padding: 36px 18px; max-width: 980px; margin: 0 auto; }
+    .products h2 { text-align: center; font-size: 1.8rem; margin-bottom: 22px; color: #111; }
+.product-list {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 18px;
+  justify-items: center;
+  align-items: stretch;
+}
+
+.product-card {
+  background: #fff;
+  border: 1px solid #eee;
+  border-radius: 12px;
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.04);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+  text-align: center;
+  padding: 12px;
+  width: 100%;
+  max-width: 250px;
+  height: 430px;
+  transition: all 0.25s ease;
+}
+
+.product-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 18px rgba(0, 0, 0, 0.08);
+}
+
+.product-card img {
+  width: 100%;
+  height: 170px;
+  object-fit: contain;
+  margin-bottom: 10px;
+}
+
+@media (max-width: 720px) {
+  .product-list {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
+  }
+  .product-card {
+    max-width: 220px;
+    height: 400px;
+  }
+  .product-card img {
+    height: 140px;
+  }
+}
+
+    /* Buttons */
+    .info-btn, .add-btn {
+      width: 90%; padding: 8px 0; border-radius: 8px; font-weight: 700; font-size: 12px;
+      cursor: pointer; text-align: center; transition: all 0.2s ease;
+    }
+    .info-btn { background: #111; color: #fff; border: none; }
+    .add-btn { background: transparent; color: #111; border: 2px solid #111; }
+    .info-btn:hover { background: #333; }
+    .add-btn:hover { background: #111; color: #fff; }
+
+    /* Cart Panel */
+    .cart-panel {
+      position: fixed; top: 0; right: -420px; width: 380px; max-width: 95%; height: 100%; background: #fff;
+      box-shadow: -8px 0 30px rgba(0, 0, 0, 0.12); transition: right 0.3s ease; z-index: 5000;
+      padding: 18px; display: flex; flex-direction: column; gap: 12px;
+    }
+    .cart-panel.open { right: 0; }
+    .cart-header { display: flex; justify-content: space-between; align-items: center; font-weight: 700; font-size: 16px; }
+    .cart-items { flex: 1; overflow: auto; display: flex; flex-direction: column; gap: 12px; }
+    .cart-item { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+    .cart-item img { width: 56px; height: 56px; border-radius: 8px; object-fit: cover; }
+    .cart-footer { border-top: 1px solid #eee; padding-top: 12px; display: flex; flex-direction: column; gap: 8px; }
+    .checkout-btn {
+      background: #111; color: #fff; padding: 10px 12px; border-radius: 10px; text-align: center; font-weight: 700;
+      cursor: pointer; text-decoration: none;
+    }
+
+    .about { max-width: 880px; margin: 50px auto; padding: 0 20px; text-align: center; }
+    .footer { text-align: center; padding: 20px 0; background: #fafafa; font-size: 13px; color: #555; }
+  </style>
+</head>
+
+<body>
+  <!-- Navbar -->
+  <header class="navbar">
+    <div class="nav-left"><div id="menuBtn" class="menu-icon">&#9776;</div></div>
+    <div class="nav-center"><a href="index.html"><img src="images/logo.png" class="nav-logo" alt="Logo"/></a></div>
+    <div class="nav-right">
+      <img src="images/search.png" id="searchIcon" class="nav-search" alt="Search"/>
+      <div style="position: relative;">
+        <img src="images/cart.png" id="cartIcon" class="nav-cart" alt="Cart"/>
+        <span id="cartCount" class="cart-count">0</span>
+      </div>
+    </div>
+  </header>
+
+  <!-- Search Bar -->
+  <div id="searchBarContainer" class="search-bar-container">
+    <input type="search" id="searchInput" placeholder="Search products..."/>
+  </div>
+
+  <!-- Side Menu -->
+  <nav id="sideMenu" class="side-menu">
+    <div id="closeBtn" class="close-btn">&times;</div>
+    <ul>
+      <li><a href="#products">Products</a></li>
+      <li><a href="#about">About Us</a></li>
+      <li><a href="contact.html">Contact Us</a></li>
+    </ul>
+  </nav>
+
+  <!-- Products Section -->
+  <section id="products" class="products">
+    <h2>Our Products</h2>
+    <div class="shop-controls" style="display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:20px;flex-wrap:wrap;">
+  <input type="text" id="filterInput" placeholder="Filter products..." 
+    style="flex:1;min-width:160px;padding:8px 10px;border:1px solid #ccc;border-radius:6px;font-size:13px;">
+  <select id="sortSelect" 
+    style="padding:8px 10px;border:1px solid #ccc;border-radius:6px;font-size:13px;background:#fff;cursor:pointer;">
+    <option value="featured">Sort by: Featured</option>
+    <option value="price-asc">Price: Low → High</option>
+    <option value="price-desc">Price: High → Low</option>
+    <option value="name-asc">Name: A → Z</option>
+    <option value="name-desc">Name: Z → A</option>
+  </select>
+</div>
+    <div id="productList" class="product-list">
+      <!-- === ALL ORIGINAL PRODUCTS (no sold-out) === -->
+      <div class="product-card" data-name="'Natural Cat' 34mm Total Fingerboards Setup" data-price="R702.45" data-desc="Full Fingerboard Setup that's Ready to be assembled. Includes all Fingerboard parts, plus incredible graphics." data-img="images/naturalcat.png">
+        <img src="images/naturalcat.png" alt="Natural Cat">
+        <h3>'Natural Cat' 34mm Total Fingerboards Setup</h3>
+        <p>R702.45</p>
+        <button class="info-btn">View More</button>
+        <button class="add-btn">Add to Cart</button>
+      </div>
+
+      <div class="product-card" data-name="'Death Stare' 34mm Total Fingerboards Setup" data-price="R702.45" data-desc="Full Fingerboard Setup that's Ready to be assembled. Includes all Fingerboard parts, plus incredible graphics." data-img="images/deathstare.png">
+        <img src="images/deathstare.png" alt="Death Stare">
+        <h3>'Death Stare' 34mm Total Fingerboards Setup</h3>
+        <p>R702.45</p>
+        <button class="info-btn">View More</button>
+        <button class="add-btn">Add to Cart</button>
+      </div>
+
+      <div class="product-card" data-name="'Catfish' 34mm Total Fingerboards Setup" data-price="R702.45" data-desc="Full Fingerboard Setup that's Ready to be assembled. Includes all Fingerboard parts, plus incredible graphics." data-img="images/catfish.png">
+        <img src="images/catfish.png" alt="Catfish">
+        <h3>'Catfish' 34mm Total Fingerboards Setup</h3>
+        <p>R702.45</p>
+        <button class="info-btn">View More</button>
+        <button class="add-btn">Add to Cart</button>
+      </div>
+
+<!-- Fatmax “Darkwood” 29mm Deck -->
+<div class="product-card" 
+  data-name="29mm Darkwood Deck" 
+  data-price="R199.99" 
+  data-desc="Prefer a slimmer ride? This simple but striking 29mm deck is built in their medium pro mold and OG popsicle shape, with matching mid plies. Includes: 1x Fatmax 29mm Darkwood deck, 1x Fatmax thin tape foam grip." 
+  data-img="images/fatmax_darkwood.png">
+  <a href="product.html?name=29mm%20Darkwood%20Deck">
+    <img src="images/fatmax_darkwood.png" alt="29mm Darkwood Deck">
+  </a>
+  <h3>Fatmax 29mm Darkwood Deck</h3>
+  <p>R199.99</p>
+  <button class="info-btn">View More</button>
+  <button class="add-btn">Add to Cart</button>
+</div>
+
+<!-- Fatmax “Corsair” 34mm Split Ply Deck -->
+<div class="product-card" 
+  data-name="Corsair 34mm Split Ply Deck" 
+  data-price="R249.99" 
+  data-desc="Featured in their signature series; This is their most complicated split ply to date, boasting a premium gloss finish in their medium mold, OG popsicle shape, and matching red and blue mid plies. Includes: 1x Fatmax Corsair 34mm deck, 1x Fatmax thin tape foam grip." 
+  data-img="images/fatmax_corsair.png">
+  <a href="product.html?name=Corsair%2034mm%20Split%20Ply%20Deck">
+    <img src="images/fatmax_corsair.png" alt="Corsair 34mm Split Ply Deck">
+  </a>
+  <h3>Fatmax “Corsair” 34mm Split Ply Deck</h3>
+  <p>R249.99</p>
+  <button class="info-btn">View More</button>
+  <button class="add-btn">Add to Cart</button>
+</div>
+
+<!-- Fatmax “Kurb Krusher” 35mm Deck -->
+<div class="product-card" 
+  data-name="Kurb Krusher 35mm Deck" 
+  data-price="R219.99" 
+  data-desc="Featured in the signature series; the Kurb Krusher 35mm fingerboard deck is a stylish and functional fingerboard deck, made in their medium pro mold, with split mid plies. Includes: 1x Fatmax Kurb Krusher 35mm deck, 1x Fatmax thin tape foam grip." 
+  data-img="images/fatmax_kurbkrusher.png">
+  <a href="product.html?name=Kurb%20Krusher%2035mm%20Deck">
+    <img src="images/fatmax_kurbkrusher.png" alt="Kurb Krusher 35mm Deck">
+  </a>
+  <h3>Fatmax “Kurb Krusher” 35mm Deck</h3>
+  <p>R219.99</p>
+  <button class="info-btn">View More</button>
+  <button class="add-btn">Add to Cart</button>
+</div>
+
+<!-- Fatmax “Bumblebees” 8.4mm 100d Wheels -->
+<div class="product-card" 
+  data-name="8.4mm 100d Bearing Wheels Bumblebees" 
+  data-price="R129.99" 
+  data-desc="With smooth feeling bearings and a quality finish these wheels will revolutionize your fingerboard setup. Includes: 1x Fatmax 8.4mm bearing 100d wheels 'Bumblebees'." 
+  data-img="images/fatmax_bumblebees.png">
+  <a href="product.html?name=8.4mm%20100d%20Bearing%20Wheels%20Bumblebees">
+    <img src="images/fatmax_bumblebees.png" alt="Fatmax Bumblebees Wheels">
+  </a>
+  <h3>Fatmax “Bumblebees” 8.4mm 100d Wheels</h3>
+  <p>R129.99</p>
+  <button class="info-btn">View More</button>
+  <button class="add-btn">Add to Cart</button>
+</div>
+
+<!-- 'Wine n' Dine' Setup -->
+<div class="product-card"
+  data-name="'Wine n' Dine' 34mm Total Fingerboards Setup"
+  data-price="R702.45"
+  data-desc="Full Fingerboard Setup that's ready to be assembled. Includes all Fingerboard parts, plus incredible graphics."
+  data-img="images/winendine.png">
+  <a href="product.html?name=Total%20Winendine%20Setup">
+    <img src="images/winendine.png" alt="'Wine n' Dine' Fingerboard Setup">
+  </a>
+  <h3>'Wine n' Dine' 34mm Total Fingerboards Setup</h3>
+  <p>R702.45</p>
+  <button class="info-btn">View More</button>
+  <button class="add-btn">Add to Cart</button>
+</div>
+
+<!-- Fatmax “Navy” 8.4mm 100d Wheels -->
+<div class="product-card" 
+  data-name="8.4mm 100d Bearing Wheels Navy" 
+  data-price="R129.99" 
+  data-desc="With smooth feeling bearings and a quality finish these wheels will revolutionize your fingerboard setup. Includes: 1x Fatmax 8.4mm bearing 100d wheels 'Navy'." 
+  data-img="images/fatmax_navywheels.png">
+  <a href="product.html?name=8.4mm%20100d%20Bearing%20Wheels%20Navy">
+    <img src="images/fatmax_navywheels.png" alt="Fatmax Navy Wheels">
+  </a>
+  <h3>Fatmax “Navy” 8.4mm 100d Wheels</h3>
+  <p>R129.99</p>
+  <button class="info-btn">View More</button>
+  <button class="add-btn">Add to Cart</button>
+</div>
+
+<!-- Fatmax “Gold Ore” 32mm Trucks -->
+<div class="product-card" 
+  data-name="32mm Fingerboard Trucks Gold Ore" 
+  data-price="R219.99" 
+  data-desc="The gold colourway to their 32mm signature fingerboard trucks. Includes: 2x Fatmax 32mm gold ore trucks, 8x bolts, 4x nuts, 1x assembly tool." 
+  data-img="images/fatmax_goldtrucks.png">
+  <a href="product.html?name=32mm%20Fingerboard%20Trucks%20Gold%20Ore">
+    <img src="images/fatmax_goldtrucks.png" alt="Gold Ore Trucks">
+  </a>
+  <h3>Fatmax “Gold Ore” 32mm Trucks</h3>
+  <p>R219.99</p>
+  <button class="info-btn">View More</button>
+  <button class="add-btn">Add to Cart</button>
+</div>
+
+<!-- Others. Foam Griptape -->
+<div class="product-card" 
+  data-name="Others. Foam Griptape" 
+  data-price="R34.99" 
+  data-desc="The first Professional Griptape in South Africa! Soft, durable foam griptape for improved control." 
+  data-img="images/griptape.png">
+  <a href="product.html?name=Others%20Foam%20Griptape">
+    <img src="images/griptape.png" alt="Foam Griptape">
+  </a>
+  <h3>Others. Foam Griptape</h3>
+  <p>R34.99</p>
+  <button class="info-btn">View More</button>
+  <button class="add-btn">Add to Cart</button>
+</div>
+
+      <div class="product-card" data-name="'Dark Vision' 34mm Total Fingerboards Setup" data-price="R702.45" data-img="images/darkvision.png" data-desc="Full Fingerboard Setup that's Ready to be assembled. Includes all Fingerboard parts, plus incredible graphics.">
+        <img src="images/darkvision.png" alt="Dark Vision">
+        <h3>'Dark Vision' 34mm Total Fingerboards Setup</h3>
+        <p>R702.45</p>
+        <button class="info-btn">View More</button>
+        <button class="add-btn">Add to Cart</button>
+      </div>
+
+      <div class="product-card" data-name="'Bank' 34mm Total Fingerboards Setup" data-price="R401.31" data-img="images/cashdeck.png" data-desc="Full Fingerboard Setup that's Ready to be assembled. Includes all Fingerboard parts, plus incredible graphics.">
+        <img src="images/cashdeck.png" alt="Bank">
+        <h3>'Bank' 34mm Total Fingerboards Setup</h3>
+        <p>R401.31</p>
+        <button class="info-btn">View More</button>
+        <button class="add-btn">Add to Cart</button>
+      </div>
+
+<div class="product-card" 
+  data-name="Fatmax Foam Griptape" 
+  data-price="R29.99" 
+  data-desc="Soft, Comfortable and Grippy Fingerboard foam tape,Thats accessible for everyone!Just R30 Each and you won't regret it! 1 x 38 x 110 mm/ 0.8 x 4.3 inches" 
+  data-img="images/fatmaxgriptape.png">
+  <a href="product.html?name=Fatmax%20Foam%20Griptape">
+    <img src="images/fatmaxgriptape.png" alt="Foam Griptape">
+  </a>
+  <h3>Faxmax Thin Foam Griptape</h3>
+  <p>R29.99</p>
+  <button class="info-btn">View More</button>
+  <button class="add-btn">Add to Cart</button>
+</div>
+
+      <div class="product-card" data-name="'Trip Vibes' 34mm Total Fingerboards Setup" data-price="R300.93" data-img="images/tripvibes.png" data-desc="Full Fingerboard Setup that's Ready to be assembled. Includes all Fingerboard parts, plus incredible graphics.">
+        <img src="images/tripvibes.png" alt="Trip Vibes">
+        <h3>'Trip Vibes' 34mm Total Fingerboards Setup</h3>
+        <p>R300.93</p>
+        <button class="info-btn">View More</button>
+        <button class="add-btn">Add to Cart</button>
+      </div>
+
+      <div class="product-card" data-name="'Blonde Furry' 34mm Total Fingerboards Setup" data-price="R702.45" data-img="images/blondefurry.png" data-desc="Full Fingerboard Setup that's Ready to be assembled. Includes all Fingerboard parts, plus incredible graphics.">
+        <img src="images/blondefurry.png" alt="Blonde Furry">
+        <h3>'Blonde Furry' 34mm Total Fingerboards Setup</h3>
+        <p>R702.45</p>
+        <button class="info-btn">View More</button>
+        <button class="add-btn">Add to Cart</button>
+      </div>
+    </div>
+  </section>
+
+<!-- Cart -->
+  <aside id="cartPanel" class="cart-panel">
+    <div class="cart-header">
+      <span>Your Cart</span>
+      <div>
+        <button id="clearCartBtn" style="background:none;border:none;cursor:pointer;">Clear</button>
+        <button id="closeCartBtn" style="background:none;border:none;cursor:pointer;font-size:18px;">&times;</button>
+      </div>
+    </div>
+    <div id="cartItems" class="cart-items"></div>
+    <div class="cart-footer">
+      <div id="cartTotal"><strong>Total: R0.00</strong></div>
+      <a href="cart.html" class="checkout-btn">Proceed to Checkout</a>
+    </div>
+  </aside>
+
+  <!-- About -->
+  <section id="about" class="about">
+    <h2>About Us</h2>
+    <p>Others Fingerboarding is a South African organization dedicated to growing the fingerboard scene, especially in Soweto. We're youth-focused and passionate about the community.</p>
+  </section>
+
+  <footer class="footer">
+    <p>&copy; 2025 Others Fingerboarding. All rights reserved.</p>
+  </footer>
+
+  <!-- === SORT & FILTER SCRIPT === -->
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const sortSelect = document.getElementById("sortSelect");
+      const filterInput = document.getElementById("filterInput");
+      const productList = document.getElementById("productList");
+
+      function sortProducts(criteria) {
+        const cards = Array.from(productList.children);
+        cards.sort((a, b) => {
+          const nameA = a.dataset.name.toLowerCase();
+          const nameB = b.dataset.name.toLowerCase();
+          const priceA = parseFloat(a.dataset.price.replace(/[^\d.]/g, ""));
+          const priceB = parseFloat(b.dataset.price.replace(/[^\d.]/g, ""));
+          switch (criteria) {
+            case "price-asc": return priceA - priceB;
+            case "price-desc": return priceB - priceA;
+            case "name-asc": return nameA.localeCompare(nameB);
+            case "name-desc": return nameB.localeCompare(nameA);
+            default: return 0;
+          }
+        });
+        cards.forEach(card => productList.appendChild(card)); // reorder
+      }
+
+      sortSelect?.addEventListener("change", () => sortProducts(sortSelect.value));
+
+      filterInput?.addEventListener("input", () => {
+        const term = filterInput.value.trim().toLowerCase();
+        document.querySelectorAll(".product-card").forEach(card => {
+          const match = card.dataset.name.toLowerCase().includes(term);
+          card.style.display = match ? "" : "none";
+        });
+      });
+    });
+  </script>
+
+  <!-- Main Script -->
+  <script src="script.js"></script>
+</body>
+</html>
